@@ -1,0 +1,900 @@
+<!doctype html>
+<!-- 
+	#### == TO-DO ==
+	#### 
+	#### * Need to account for possibility of multiple photo URLs
+	#### * Account for vertical images? Or should we just force photos to be cropped horizontal
+
+-->
+
+<html>
+<head>
+	<!-- force IE to use newest modes, so it displays right. -->
+	<!-- this code is needed for testing, but is built into STLtoday and not needed there -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- end IE bit -->
+	<link href="http://necolas.github.io/normalize.css/2.1.3/normalize.css" rel="stylesheet">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<link href='http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700,400italic|Lato:100,300,400,700' rel='stylesheet' type='text/css'>
+	<script type="text/javascript"  src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript"  src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="http://images.stltoday.com/mds/00003483/content/examples/common/tabletop.js"></script>
+	<script type="text/javascript" src="http://images.stltoday.com/mds/00003483/content/examples/common/handlebars.js"></script>
+	<script type="text/javascript" src="http://images.stltoday.com/mds/00003483/content/modernizr-date-test.js"></script>
+</head>
+
+<body>
+
+
+
+<style>
+
+	#startDate {
+	        left: 325px;
+	        top: 24px;
+	        width: 163px;
+	}
+
+	#startLabel {
+		position: relative;
+		left: 320px;
+		top: 24px;
+	}
+
+	#todayWrapper {
+	        margin-left: -7px;
+	}
+
+	#banner {
+		background-image: url(http://images.stltoday.com/mds/00003760/content/banner.png);
+		width: 620px;
+		height: 100px;
+		z-index: 100;
+		position: relative;
+		left: 7px;
+	}
+
+	#topDate {
+		position: relative;
+		top: 43px;
+		left: -40px;
+		z-index: 101;
+		text-align: right;
+	}
+
+	#topDate h3 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		font-size: 24px;
+		text-transform: uppercase;
+		color: white;
+	}
+
+	#newsLead {
+		width: 626.033px;
+		position: relative;
+		margin-top: -16px;
+		z-index: 0;
+	}
+
+	#newsLead .lead-image-container {
+		width: 380.402px; 
+		height: 262.725px;
+		float: left;
+		margin: 0 10px 15px 40px;
+		background-position: center center;
+		background-repeat: no-repeat;
+		overflow: hidden;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+	}
+
+	#newsLead .lead-image-container img {
+		min-width: 100%;
+		min-height: 100%;
+		/* IE 8 */
+		-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+		/* IE 5-7 */
+		filter: alpha(opacity=0);
+		/* modern browsers */
+		opacity: 0;
+	}
+
+	#newsLead h3 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		text-transform: uppercase;
+		font-size: 18px;
+		margin-bottom: 5px;
+		padding-top: 15px;
+	}
+
+	#newsLead p {
+		font-family: 'PT Serif', Georgia, serif;
+		font-size: 15px;
+		height: 235.56px;
+	}
+
+	#newsLead a {
+		color: #990000;
+		cursor: pointer;
+	}
+
+	#newsShorts {
+		margin-left: 40px;
+		width: 586.033px;
+		height: 100%;
+		border-bottom: 1px solid #e0e0e0;
+	}
+
+	#newsShorts h3 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		text-transform: uppercase;
+		font-size: 15px;
+		margin-bottom: 5px;
+	}
+
+	#newsShorts table {
+		width: 100%;
+		table-layout: fixed;
+		border-spacing: 10px;
+	}
+
+	#newsShorts td {
+		font-family: 'PT Serif', Georgia, serif;
+		font-size: 13px;
+		padding-right: 12px;
+		word-wrap: break-word;
+	        vertical-align: top;
+	}
+
+	#newsShorts a {
+		color: #990000;
+		cursor: pointer;
+	}
+
+	#milestonesBirths {
+		width: 351.132px;
+		height: 90px;
+		margin-left: 40px;
+		line-height: 19px;
+		margin-top: 15px;
+	}
+
+	#milestonesDeaths {
+		width: 351.132px;
+		height: 90px;
+		margin-left: 40px;
+		line-height: 19px;
+	}
+
+	#milestonesBirths h3, #milestonesDeaths h3 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		text-transform: uppercase;
+		font-size: 20px;
+		margin-bottom: 5px;
+		text-align: center;
+	}
+
+	#milestonesBirths table, #milestonesDeaths table {
+		width: 100%;
+		border: 0px;
+	}
+
+	#milestonesBirths table tbody tr, #milestonesDeaths table tbody tr {
+		background: url("http://www.momsformarijuana.org/blogs/skins/mystique/images/dot.gif") 0 78% repeat-x;
+	}
+
+	#milestonesBirths table tbody td, #milestonesDeaths table tbody td {
+		font-family: 'PT Serif', Georgia, serif;
+		font-size: 13px;
+	        line-height: 1.3;
+	}
+
+	#milestonesBirths table tbody tr td.first, #milestonesDeaths table tbody tr td.first {
+		font-weight: bold;
+		text-align: left;
+	}
+
+	#milestonesBirths table tbody tr td.last, #milestonesDeaths table tbody tr td.last {
+		font-weight: normal;
+		text-align: right;
+	}
+
+	#milestonesBirths table tbody td span, #milestonesDeaths table tbody td span {
+		white-space: pre;
+		background: white;
+	}
+
+	#milestonesBirths table tbody td.first span, #milestonesDeaths table tbody td.first span {
+		padding: 0px 3px 0px 0px; 
+	}
+
+	#milestonesBirths table tbody td.last span, #milestonesDeaths table tbody td.last span {
+		padding: 0px 0px 0px 3px; 
+	}
+
+	#weather {
+		width: 191.732px;
+		position: relative;
+		float: right;
+		top: -182px;
+		text-align: center;
+		border-left: 1px solid #e0e0e0;
+		padding-left: 15px;
+		height: 185px;
+	}
+
+	#weather h3 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		text-transform: uppercase;
+		font-size: 20px;
+		margin-bottom: 50px;
+		text-align: right;
+		line-height: 20px;
+	}
+
+	#weather img {
+		position: absolute;
+		top: -5px;
+		left: 15px;
+	}
+
+	#tempsHigh {
+		float: left;
+		margin-top: 2px;
+	}
+
+	#tempsLow {
+		float: right;
+		margin-top: 8px;
+	}
+
+	#tempsHigh h4, #tempsLow h4 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		font-size: 45.87px;
+		line-height: 45.87px;
+		font-weight: 700;
+		letter-spacing: -0.05em;
+	}
+
+	#tempsHigh p, #tempsLow p {
+		font-family: 'Lato', Helvetica, sans-serif;
+	}
+
+	#tempsHigh p.record, #tempsLow p.record {
+		font-size: 20px;
+		font-weight: 300;
+		line-height: 14px;
+		height: 20px;
+		padding-bottom: 5px;
+	}
+
+
+	#tempsLow p.year, #tempsHigh p.year {
+		color: #990000; 
+		font-size: 11px; 
+		font-weight: 700;
+		line-height: 9px;
+		margin-bottom: 5px;
+	}
+
+
+	#tempsHigh h4 {
+		margin-bottom: 4px;
+	}
+
+	#tempsLow p.record {
+		margin-bottom: -8px;
+	}
+
+
+	#slash {
+		width: 36.567px;
+		font-family: 'Lato', Helvetica, sans-serif;
+		font-size: 89.74px;
+		line-height: 89.74px;
+		font-weight: bold;
+		color: #990000;
+		position: absolute;
+		top: 86px;
+		left: 105px;
+	}
+
+	#todayWrapper h3 span {
+		color: #990000;
+	}
+
+	#todayWrapper hr {
+		height: 1px;
+	    background: #e0e0e0;
+	    width: 196px;
+	    border: none;
+	    float: right;
+	    margin-top: -30px;
+	}
+
+	#startDate {
+		position: relative;
+		z-index: 101;
+	}
+	    
+	.ui-datepicker-year, .ui-datepicker-calendar thead {
+	    display: none;
+	}
+
+	.ui-datepicker {
+	    margin-left: -78px !important;
+	}
+
+	#errorMessage { display: none; }
+	#errorMessage ul { list-style-type: disc; margin-left: 10px }
+	#errorMessage h3 {
+		font-family: 'Lato', Helvetica, sans-serif;
+		font-size: 24px;
+		text-transform: uppercase;
+	}
+	#errorMessage p, ul {
+		font-family: 'PT Serif', Georgia, serif;
+		font-size: 16px;
+		line-height: 24px;
+	}
+	#errorMessage ul li a:link { color: red; text-decoration: underline; }
+	#errorMessage ul li a:visited { color: red; text-decoration: underline; }
+	#errorMessage ul li a:hover { color: #900; text-decoration: none; }
+
+	    
+	/*------------------------------------MOBILE PHONE STYLES------------------------------------*/      
+	@media only screen and (min-device-width : 320px) and (max-device-width : 568px) {
+	        
+	        #startDate {
+                left: 127px;
+                top: 20px;
+	        }
+
+	        #startLabel {
+                left: 2px;
+                top: 42px;
+	        }
+
+	        #banner {
+				background-image: url(http://images.stltoday.com/mds/00003760/content/smallBanner.png);
+				background-repeat: no-repeat;
+				width: 103%;
+				height: 55px;
+				z-index: 100;
+				position: relative;
+				left: 0px;
+				margin-bottom: 25px;
+			}
+
+			#topDate {
+				position: relative;
+				top: 37px;
+				left: -28px;
+				z-index: 101;
+				text-align: right;
+			}
+
+			#topDate h3 {
+				font-family: 'Lato', Helvetica, sans-serif;
+				font-size: 14px;
+				text-transform: uppercase;
+				color: #FFF;
+			}
+
+			#newsLead .lead-image-container {
+				width: 100%; 
+				float: left;
+				margin: 0 10px 15px 0px;
+				background-position: center center;
+				background-repeat: no-repeat;
+				overflow: hidden;
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+
+			#newsLead .lead-image-container img {
+				width: 100%;
+				height: 100%;
+				/* IE 8 */
+				-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+				/* IE 5-7 */
+				filter: alpha(opacity=0);
+				/* modern browsers */
+				opacity: 0;
+			}
+
+	        #newsLead {
+				width: 100%;
+				margin-bottom: 10px;
+			}
+
+	        #newsLead img {
+				width: 100%;
+				height: 207.195px;
+				float: left;
+				padding: 0 10px 15px 0px;
+			}
+
+			#newsLead h3 {
+				font-family: 'Lato', Helvetica, sans-serif;
+				text-transform: uppercase;
+				font-size: 18px;
+				margin-bottom: 5px;
+				padding-top: 15px;
+			}
+
+			#newsLead p {
+				font-family: 'PT Serif', Georgia, serif;
+				font-size: 15px;
+				height: 100%;
+			}
+
+			#newsLead a {
+				color: #990000;
+				cursor: pointer;
+			}
+
+			#newsShorts {
+				margin-left: 0px;
+				width: 100%;
+				height: 100%;
+				border-bottom: none;
+			}
+
+			#newsShorts table {
+				border-spacing: 0px;
+			}
+
+
+
+			#newsShorts td {
+				display: block;
+				font-family: 'PT Serif', Georgia, serif;
+				font-size: 13px;
+				width: 100%;
+				padding: 0px 0px 10px 0px;
+			}
+
+			#newsShorts td:first-child {
+				padding-top: 10px;
+			}
+
+			#milestonesBirths {
+				width: 100%;
+				height: 90px;
+				margin-left: 0px;
+				line-height: 19px;
+			}
+
+			#milestonesDeaths {
+				width: 100%;
+				height: 90px;
+				margin-left: 0px;
+				line-height: 19px;
+				margin-bottom: 20px;
+			}
+
+			#todayWrapper hr {
+				height: 1px;
+			    background: #e0e0e0;
+			    width: 100%;
+			    border: none;
+			    float: left;
+			    margin-top: 0px;
+			}
+
+			#weather {
+				width: 200px;
+				position: relative;
+				float: none;
+				top: 0px;
+				text-align: center;
+				border-left: none;
+				padding-left: 0px;
+				left: 16%;
+				height: 185px;
+			}
+
+			#slash {
+				width: 36.567px;
+				font-family: 'Lato', Helvetica, sans-serif;
+				font-size: 89.74px;
+				line-height: 89.74px;
+				font-weight: bold;
+				color: #990000;
+				position: absolute;
+				top: 86px;
+				left: 96px;
+			}
+
+			.grid_8 {
+				margin-left: 5px;
+			}
+
+	                .ui-datepicker {
+	                       margin-left: 0px !important;
+	               }
+	    }
+
+</style>
+
+
+
+<script type="text/javascript">
+
+	var monthNames = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+	var today = new Date();
+
+	var public_spreadsheet_url = 'https://docs.google.com/spreadsheet/pub?key=0Ah9eiJcTTiAKdHpEdF84dWhHMllXWlJsSDlrVUR2RkE&output=html'
+
+	window.onload = function() { 
+		init(today); 
+
+		// is this a touch device with native datepicker support?
+		if (Modernizr.touch && Modernizr.inputtypes.date) {
+			document.getElementById('startDate').type = 'date';
+			$('#startDate').blur(function() {
+				// The value of the <input> will be in the format 2012-12-13
+				// so we need to change it to slashes, which javascript will understand
+				var pickerValue = $('#startDate').val().replace(/-/g,'/');
+				if (pickerValue) {
+					var dayToSet = new Date(pickerValue);
+					init(dayToSet);
+				}
+			});
+		}
+		else {
+			
+			$('#startDate').datepicker({
+				inline: true,
+				dateFormat: 'MM d',
+				onClose: function(pickerValue,pickerObj) {
+					// jQuery UI's datepicker gives us date in format 2012/12/13. Perfect.
+					if (pickerValue) {
+						var dayToSet = new Date(pickerValue);
+						init(dayToSet);
+					}
+				}
+			});
+		}
+
+		// We need to check if Tabletop actually worked and grabbed the spreadsheet.
+		// A Google bug keeps it from working if people have expired Google sessions.
+		/*setTimeout(function() {
+			var dataLoaded = $('#newsShorts table').length;
+
+			if ( dataLoaded == 0 ) {
+				var blob = '';
+				blob += '<h3>Uh oh</h3>';
+				blob += '<p>This interactive requires that you be logged into your Google account.</p>';
+				blob += '<p>Want to fix it? Here are the steps:</p>';
+				blob += '<ul>';
+				blob += '<li><a href="http://accounts.google.com/Login" target="_blank">Log back in</a> to your Google account</li>';
+				blob += '<li><a href="#" onclick="window.location.reload(true);">Reload</a> this page</li>';
+				blob += '</ul>';
+
+				$('#errorMessage').append(blob);
+				$('#todayWrapper').hide();
+				$('#errorMessage').fadeIn();
+			}
+		}, 5000);*/
+	};
+
+	
+
+	function init(theDate) {
+		// theDate should be a javascript date object, not just text.
+		var mm = theDate.getMonth()+1;
+		var dd = theDate.getDate();
+		var queryDate = mm + '/' + dd;
+		var topDate = monthNames[theDate.getMonth()] + ' ' + dd;
+		$('#topDate h3').text(topDate);
+		var myQuery = 'date="' + queryDate +  '"';
+		document.getElementById('startDate').setAttribute('placeholder', topDate);
+
+		// cleanup 
+		$('#newsLead').empty();
+		$('#newsShorts').empty();
+		$('#milestonesBirths table tbody').empty();
+		$('#milestonesDeaths table tbody').empty();
+		$('#tempsLow').empty();
+		$('#tempsHigh').empty();
+
+
+		// The key here is to use a query, so that we don't get all 365 days worth of spreadsheet rows.
+		// For testing I'm using only 9/3. Production code will grab based on today's actual date.
+		// The proxy can help us avoid the Google bug.
+		Tabletop.init({  
+			key: public_spreadsheet_url, 
+//			proxy: 'https://s3.amazonaws.com/flatware-live',
+			callback: showInfo,
+			postProcess: addAges,
+			wanted: 'Sheet1',
+			query: myQuery,
+//			query: 'date="9/5"',
+			parseNumbers: true,
+			simpleSheet: false
+		});
+		
+
+	} // init
+
+
+
+
+
+	// Function to randomly shuffle an array, using Fisher-Yates algorithm.
+	// From stackOverflow: http://stackoverflow.com/questions/2450954/how-to-randomize-a-javascript-array
+	function shuffleArray(array) {
+		for (var i = array.length - 1; i > 0; i--) {
+			var j = Math.floor(Math.random() * (i + 1));
+			var temp = array[i];
+			array[i] = array[j];
+			array[j] = temp;
+		}
+		return array;
+	}
+
+	// Calculate ages for living people celebrating birthday today.
+	// Ages of dead people should be hard-coded into the spreadsheet.
+	function addAges(element) {
+		var yy = new Date().getFullYear();
+		if ( element['type'] == 'birth' ) {
+			var age = yy - element['year'];
+			element['age'] = age;
+		}
+	}
+
+
+	function showInfo(data, tabletop) {
+
+		// comp
+		var news = data['Sheet1'].elements.filter( function(el) {
+			return el.type == 'news';
+		});
+		var births = data['Sheet1'].elements.filter( function(el) {
+			return el.type == 'birth';
+		});
+		var deaths = data['Sheet1'].elements.filter( function(el) {
+			return el.type == 'death';
+		});
+		var tempHigh = data['Sheet1'].elements.filter( function(el) {
+			return el.type == 'temperature-high';
+		});
+		var tempLow = data['Sheet1'].elements.filter( function(el) {
+			return el.type == 'temperature-low';
+		});
+
+		// Lead items must have a photo. So grab all news items with photos.
+		var leads = news.filter( function(el) { 
+			return el.imageurl > '';
+		});
+
+		// Randomly shuffle this array of potential Lead items. First one will be used as our Lead.
+		shuffleArray(leads);
+
+		// Now filter the News array to remove the Lead item from it.
+		news = news.filter( function(el) { 
+			return el.headline != leads[0].headline;
+		});
+
+		// Let's also randomly shuffle the news shorts, births, and deaths
+		shuffleArray(news);
+		shuffleArray(births);
+		shuffleArray(deaths);
+
+
+		// Finally, let's trim these arrays to just three objects.
+		news = news.slice(0,3);
+		births = births.slice(0,3);
+		deaths = deaths.slice(0,3);
+
+		// And trim these back to just one. Though there should only be one in the first place.
+		tempLow = tempLow.slice(0,1);
+		tempHigh = tempHigh.slice(0,1);
+
+//		console.log(leads);
+//		console.log(news);
+//		console.log(births);
+//		console.log(deaths);
+//		console.log(tempHigh);
+//		console.log(tempLow);
+
+		var leadSrc = $('#lead-template').html();
+		var newsSrc = $('#news-template').html();
+		var birthSrc = $('#birth-template').html();
+		var deathSrc = $('#death-template').html();
+		var lowSrc = $('#low-template').html();
+		var highSrc = $('#high-template').html();
+
+		var leadTmpl = Handlebars.compile(leadSrc);
+		var newsTmpl = Handlebars.compile(newsSrc);
+		var birthTmpl = Handlebars.compile(birthSrc);
+		var deathTmpl = Handlebars.compile(deathSrc);
+		var lowTmpl = Handlebars.compile(lowSrc);
+		var highTmpl = Handlebars.compile(highSrc);
+
+
+		// Lead news events
+		// Only need one of these
+		var html = leadTmpl(leads[0]);
+		$('#newsLead').append(html);
+
+		// News events
+		// Need three of these
+		var html = newsTmpl({items:news});
+		$('#newsShorts').append(html);
+
+		// Birth events
+		var html = birthTmpl({items:births});
+		$('#milestonesBirths table tbody').append(html);
+
+		// Death events
+		var html = deathTmpl({items:deaths});
+		$('#milestonesDeaths table tbody').append(html);
+
+		// Low temp
+		var html = lowTmpl(tempLow[0]);
+		$('#tempsLow').append(html);
+
+		// High temp
+		var html = highTmpl(tempHigh[0]);
+		$('#tempsHigh').append(html);
+
+	} // showInfo
+
+
+	// add .trim() support for browsers that don't have it
+	if (!String.prototype.trim) {  
+		String.prototype.trim = function () {  
+			return this.replace(/^\s+|\s+$/g,'');
+		};  
+	}
+
+
+	// add .filter() support for browsers (IE) that don't have it.
+	if (!Array.prototype.filter) {
+		Array.prototype.filter = function(fun /*, thisp*/) {
+			'use strict';
+
+			if (this == null) {
+				throw new TypeError();
+			}
+
+			var t = Object(this),
+					len = t.length >>> 0,
+					res, thisp, i, val;
+			if (typeof fun !== 'function') {
+				throw new TypeError();
+			}
+
+			res = [];
+			thisp = arguments[1];
+			for (i = 0; i < len; i++) {
+				if (i in t) {
+					val = t[i]; // in case fun mutates this
+					if (fun.call(thisp, val, i, t)) {
+						res.push(val);
+					}
+				}
+			}
+
+			return res;
+		};
+	}
+
+	
+
+
+</script>
+
+
+<!-- TODAY IN ST. LOUIS HTML STRUCTURE -->
+
+<div id="todayWrapper">
+
+	<label id="startLabel" for="startDate">Select another day</label>
+	<input id="startDate" name="startDate" class="date-picker" type="text"  min="2014-01-01" max="2014-12-31"/>
+
+	<div id="topDate">
+		<h3>&nbsp;</h3>
+	</div>
+	
+	<div id="banner">
+	</div>
+	
+	<div id="newsLead"></div>
+
+	<div id="newsShorts"></div>
+
+	<div id="milestonesBirths">
+		<h3>Born <span>today</span></h3>
+		<table><tbody></tbody></table>
+	</div>
+
+	<div id="milestonesDeaths">
+		<h3>Died <span>today</span></h3>
+		<table><tbody></tbody></table>
+	</div>
+
+	<div id="weather">
+		<img src="http://images.stltoday.com/mds/00003760/content/weather.png">
+		<h3>Today's<br /><span>Weather<span></h3>
+		<div id="tempsHigh"></div>
+		<div id="slash">/</div>
+		<div id="tempsLow"></div>
+	</div>
+
+</div>
+
+<div id="errorMessage"></div>
+
+
+<!-- HANDLEBARS TEMPLATES -->
+
+<!-- Use triple braces around fields where you want HTML code to remain un-escaped  -->
+<!-- In this case, that's the {{{text}}} field, which sometimes contains <a> links -->
+
+<script id="lead-template" type="text/x-handlebars-template">
+	<div class="lead-image-container" style="background-image: url({{imageurl}});">
+		<img src="{{imageurl}}" />
+	</div>
+	<h3>On this day in <span>{{year}}</span>:</h3>
+	<p class="news">{{text}}
+	{{#if relatedurl}}<br /><a href="{{relatedurl}}">Learn more...</a>{{/if}}
+	</p>
+	<hr />
+</script>
+
+<script id="news-template" type="text/x-handlebars-template">
+	<table >
+		<tr>
+			{{#each items}}
+			<td>
+				<h3><span>{{year}}</span>: {{headline}}</h3>
+				<p>{{text}}
+				{{#if relatedurl}}<br /><a href="{{relatedurl}}">Learn more...</a>{{/if}}
+				</p>
+			</td>
+			{{/each}}
+		</tr>
+	</table>
+</script>
+
+<script id="birth-template" type="text/x-handlebars-template">
+	{{#each items}}
+	<tr>
+		<td class="first"><span>{{#if relatedurl}}<a href="{{relatedurl}}">{{/if}}{{headline}}{{#if relatedurl}}</a>{{/if}}</span></td>
+		<td class="last"><span>{{age}} years old ({{year}})</span></td>
+	</tr>
+	{{/each}}
+</script>
+
+<script id="death-template" type="text/x-handlebars-template">
+	{{#each items}}
+	<tr>
+		<td class="first"><span>{{#if relatedurl}}<a href="{{relatedurl}}">{{/if}}{{headline}}{{#if relatedurl}}</a>{{/if}}</span></td>
+		<td class="last"><span>{{year}} ({{age}} years old)</span></td>
+	</tr>
+	{{/each}}
+</script>
+
+<script id="high-template" type="text/x-handlebars-template">
+	<h4>{{headline}}&deg;</h4>
+	<p class="year"><span>{{year}}</span></p>
+	<p class="record">HIGH</p>
+</script>
+
+<script id="low-template" type="text/x-handlebars-template">
+	<p class="year"><span>{{year}}</span></p>
+	<p class="record">LOW</p>
+	<h4>{{headline}}&deg;</h4>
+</script>
+
+</body>
+</html>
