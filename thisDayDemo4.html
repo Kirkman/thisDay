@@ -31,9 +31,9 @@
 <style>
 
 	#startDate {
-	        left: 325px;
-	        top: 24px;
-	        width: 163px;
+			left: 325px;
+			top: 24px;
+			width: 163px;
 	}
 
 	#startLabel {
@@ -43,7 +43,7 @@
 	}
 
 	#todayWrapper {
-	        margin-left: -7px;
+			margin-left: -7px;
 	}
 
 	#banner {
@@ -146,7 +146,7 @@
 		font-size: 13px;
 		padding-right: 12px;
 		word-wrap: break-word;
-	        vertical-align: top;
+			vertical-align: top;
 	}
 
 	#newsShorts a {
@@ -189,7 +189,7 @@
 	#milestonesBirths table tbody td, #milestonesDeaths table tbody td {
 		font-family: 'PT Serif', Georgia, serif;
 		font-size: 13px;
-	        line-height: 1.3;
+			line-height: 1.3;
 	}
 
 	#milestonesBirths table tbody tr td.first, #milestonesDeaths table tbody tr td.first {
@@ -308,24 +308,24 @@
 
 	#todayWrapper hr {
 		height: 1px;
-	    background: #e0e0e0;
-	    width: 196px;
-	    border: none;
-	    float: right;
-	    margin-top: -30px;
+		background: #e0e0e0;
+		width: 196px;
+		border: none;
+		float: right;
+		margin-top: -30px;
 	}
 
 	#startDate {
 		position: relative;
 		z-index: 101;
 	}
-	    
+		
 	.ui-datepicker-year, .ui-datepicker-calendar thead {
-	    display: none;
+		display: none;
 	}
 
 	.ui-datepicker {
-	    margin-left: -78px !important;
+		margin-left: -78px !important;
 	}
 
 	#errorMessage { display: none; }
@@ -344,21 +344,21 @@
 	#errorMessage ul li a:visited { color: red; text-decoration: underline; }
 	#errorMessage ul li a:hover { color: #900; text-decoration: none; }
 
-	    
+		
 	/*------------------------------------MOBILE PHONE STYLES------------------------------------*/      
 	@media only screen and (min-device-width : 320px) and (max-device-width : 568px) {
-	        
-	        #startDate {
+			
+			#startDate {
                 left: 127px;
                 top: 20px;
-	        }
+			}
 
-	        #startLabel {
+			#startLabel {
                 left: 2px;
                 top: 42px;
-	        }
+			}
 
-	        #banner {
+			#banner {
 				background-image: url(http://images.stltoday.com/mds/00003760/content/smallBanner.png);
 				background-repeat: no-repeat;
 				width: 103%;
@@ -408,12 +408,12 @@
 				opacity: 0;
 			}
 
-	        #newsLead {
+			#newsLead {
 				width: 100%;
 				margin-bottom: 10px;
 			}
 
-	        #newsLead img {
+			#newsLead img {
 				width: 100%;
 				height: 207.195px;
 				float: left;
@@ -481,11 +481,11 @@
 
 			#todayWrapper hr {
 				height: 1px;
-			    background: #e0e0e0;
-			    width: 100%;
-			    border: none;
-			    float: left;
-			    margin-top: 0px;
+				background: #e0e0e0;
+				width: 100%;
+				border: none;
+				float: left;
+				margin-top: 0px;
 			}
 
 			#weather {
@@ -516,10 +516,10 @@
 				margin-left: 5px;
 			}
 
-	                .ui-datepicker {
-	                       margin-left: 0px !important;
-	               }
-	    }
+			.ui-datepicker {
+				margin-left: 0px !important;
+			}
+		}
 
 </style>
 
@@ -609,18 +609,21 @@
 		// The key here is to use a query, so that we don't get all 365 days worth of spreadsheet rows.
 		// For testing I'm using only 9/3. Production code will grab based on today's actual date.
 		// The proxy can help us avoid the Google bug.
-		Tabletop.init({  
-			key: public_spreadsheet_url, 
+//		Tabletop.init({  
+//			key: public_spreadsheet_url, 
 //			proxy: 'https://s3.amazonaws.com/flatware-live',
-			callback: showInfo,
-			postProcess: addAges,
-			wanted: 'Sheet1',
-			query: myQuery,
+//			callback: showInfo,
+//			postProcess: addAges,
+//			wanted: 'Sheet1',
+//			query: myQuery,
 //			query: 'date="9/5"',
-			parseNumbers: true,
-			simpleSheet: false
-		});
-		
+//			parseNumbers: true,
+//			simpleSheet: false
+//		});
+
+	$.getJSON( 'http://localhost/this-day-google-to-json/9-2.json', function(data){
+		showInfo(data);
+	} );
 
 	} // init
 
@@ -652,7 +655,6 @@
 
 
 	function showInfo(data, tabletop) {
-
 		// comp
 		var news = data['Sheet1'].elements.filter( function(el) {
 			return el.type == 'news';
